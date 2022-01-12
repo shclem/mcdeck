@@ -180,6 +180,14 @@ class MCRepo():
         deck["version"] = deckResponse["version"]
         deck["url"] = self.__getUrl("deck/view",deckId)
 
+        # Initialize cards sections to fix order. (hero, ally, ...) 
+        deck['cards'][self.__localise('hero')] = []
+        deck['cards'][self.__localise('ally')] = []
+        deck['cards'][self.__localise('upgrade')] = []
+        deck['cards'][self.__localise('event')] = []
+        deck['cards'][self.__localise('support')] = []
+        deck['cards'][self.__localise('resource')] = []
+
         for cardId, cardQuantity in deckResponse["slots"].items():
             card, cardType = self.__buildCard( cardId, cardQuantity)
 
@@ -187,6 +195,7 @@ class MCRepo():
 
             if cardType not in deck['cards']:
                 deck['cards'][cardType] = []
+                
             deck['cards'][cardType].append(card)
             
         return deck

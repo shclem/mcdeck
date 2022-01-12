@@ -26,5 +26,5 @@ class MCArgs():
             with open(args.input) as file:
                 while (line := file.readline()):
                     words = line.split()
-                    if len(words) > 0:
+                    if len(words) > 0 and words[0] != '#':
                         self.deckIds.append(words[0])

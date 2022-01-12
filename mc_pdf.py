@@ -73,7 +73,8 @@ class MCPdf(FPDF):
 
         for cardType, cards in deck['cards'].items():
             count = self.countCards(cards)
-            self.drawDeckSection(cardType, cards, count, totalCount)
+            if count > 0:
+                self.drawDeckSection(cardType, cards, count, totalCount)
 
         self.x = self.startX + self.cardIndexX * self.cardWidth
         self.y = self.startY + (self.cardIndexY+1) * self.cardHeight - 5
@@ -88,7 +89,7 @@ class MCPdf(FPDF):
         if (self.y-self.startY-self.cardIndexY*self.cardHeight) > self.cardHeight - 13:
             self.columlIndexX = 1
             self.y = self.startY + self.cardIndexY*self.cardHeight + self.columnMarginTop
-            self.x = self.startX + self.cardIndexX*self.cardWidth + self.columlIndexX*self.columnWidth + self.columnMarginStart
+            self.x = self.startX + self.cardIndexX*self.cardWidth + self.columlIndexX*self.columnWidth
 
         self.set_font("Arial", size = 6, style = 'B')
         self.cell(20, 3, txt = f"{title} ({count})",ln = 2, align = 'L')
