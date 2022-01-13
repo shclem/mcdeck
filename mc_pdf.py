@@ -98,7 +98,7 @@ class MCPdf(FPDF):
         self.y += 0.7
 
         self.set_font("Arial", size = 6)
-        cards.sort(key=lambda card: 'a' if card['icon']=='resources/basic.png' else 'b') 
+        cards.sort(key=lambda card: 'a' if card['icon']=='resources/basic.png' else card['icon']) 
         for card in cards:
             if (self.y-self.startY-self.cardIndexY*self.cardHeight) > self.cardHeight - 8:
                 self.columlIndexX = 1
