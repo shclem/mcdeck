@@ -133,5 +133,5 @@ dmypy.json
 
 # Project
 cache
-input.txt
-output.pdf
+input
+output
