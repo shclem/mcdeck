@@ -62,13 +62,12 @@ class MCRepo():
 
     #---------------------------------------------
 
-    def __jwrite(self, fileName, obj):
-        json_object = json.dumps(obj.json(), sort_keys=True, indent=4)
+    def __jwrite(self, fileName, json):
         dirName = os.path.dirname(fileName)
         if not os.path.exists(dirName):
             os.makedirs(dirName)
         with open(fileName, "w") as file:
-            file.write(json_object)
+            file.write(json)
 
     def __jread(self, fileName):
         with open(fileName, 'r') as file:
@@ -95,8 +94,10 @@ class MCRepo():
             return self.__jread(fileName)
         else:
             response = requests.get(self.__getUrl(path, id))
-            self.__jwrite(fileName, response)
-            return response.json()
+            json_str = json.dumps(response.json(), sort_keys=True, indent=4)
+            json_str = json_str.replace('\\u0152','OE').replace('\\u0153','oe')
+            self.__jwrite(fileName, json_str)
+            return json.loads(json_str)
 
     #---------------------------------------------
 
@@ -195,7 +196,7 @@ class MCRepo():
 
             if cardType not in deck['cards']:
                 deck['cards'][cardType] = []
-                
+
             deck['cards'][cardType].append(card)
             
         return deck
