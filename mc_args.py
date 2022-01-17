@@ -1,4 +1,5 @@
 import argparse
+import os
 
 class MCArgs():
 
@@ -20,6 +21,10 @@ class MCArgs():
 
         self.output = args.output 
         self.output += '.pdf' if not args.output.lower().endswith('.pdf') else ''
+        directory = os.path.dirname(self.output)
+        print(directory)
+        if os.path.isdir(directory) == False:
+            os.mkdir(directory)
 
         self.deckIds = args.deckIds
         if args.input is not None:
