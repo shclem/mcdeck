@@ -9,7 +9,7 @@ class MCArgs():
 
     def __init__(self):
         parser = argparse.ArgumentParser(description='Generate deck cards pdf document from a marvelcdb.com deck ID list.')
-        parser.add_argument('deckIds', metavar='ID', type=int, nargs='?', default=[], help='a deck Id')
+        parser.add_argument('deckIds', metavar='ID', type=int, nargs='*', default=[], help='Optional list of deck Ids')
         parser.add_argument('-l','--language',choices=['de','es','fr','it'], default='en', help='Language or \'en\' by default')
         parser.add_argument('-a','--api',choices=['public'], default='public', help='Kind of API endpoint to use or \'public\' by default. For instance only public api is supported.')
         parser.add_argument('-o','--output', default='output/output.pdf', help='Output pdf file or by default \'output/output.pdf\'')
@@ -22,7 +22,6 @@ class MCArgs():
         self.output = args.output 
         self.output += '.pdf' if not args.output.lower().endswith('.pdf') else ''
         directory = os.path.dirname(self.output)
-        print(directory)
         if os.path.isdir(directory) == False:
             os.mkdir(directory)
 
