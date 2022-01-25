@@ -81,7 +81,7 @@ Use 1 or more ids to generate deck cards on "./output/output.pdf".
 
 > python mcdeck.py 260621 260622 26062
 
-![Sampe](/images/sample_01.png)
+![Sample 01](/images/sample_01.PNG)
 
 ### Exemple 2
 
@@ -99,7 +99,7 @@ Use ids in ["./input/sample.json"](/input/sample.json) to generate deck cards on
 
 > python mcdeck.py -i input/sample.json
 
-![Sampe](/images/sample_02.png)
+![Sample 02](/images/sample_02.PNG)
 
 ### Exemple 4
 
@@ -114,7 +114,7 @@ Use ids from  ["./input/sample.json"](/input/sample.json) with some command line
 
 > python mcdeck.py -i input/sample.json -l fr -s by_set -u -ifs B
 
-![Sampe](/images/sample_03.png)
+![Sample 03](/images/sample_03.PNG)
 
 **⚠️ Note, on Adam Warlock's deck, that using the unfold option produces a display bug. This option should be used with caution**
 
@@ -128,7 +128,7 @@ Use background option to use background image from ["resources/background"](/res
 
 > python mcdeck.py -i input/sample.json -b 
 
-![Sampe](/images/sample_04.png)
+![Sample 04](/images/sample_04.PNG)
 
 **Another background directory can be specified with argument -bd**
 
