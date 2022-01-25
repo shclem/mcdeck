@@ -133,6 +133,10 @@ dmypy.json
 
 # Project
 cache
-input
+resources/*
+!resources/background
+input/*
+!input/sample.txt
+!input/sample.json
 output
 todo

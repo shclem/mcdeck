@@ -1,0 +1,14 @@
+#==================
+# Sample Deck List
+#==================
+#
+# Just a list of deck identifier.
+# Make sure that each identifier is on a separate line.
+#
+# Begin a ligne with '#' symbol to write comments. 
+#
+260621
+260622
+260623
+260624
+260625

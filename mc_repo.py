@@ -2,12 +2,15 @@ import json
 import os
 import requests
 from os.path import exists
+from mc_args import MCArgs
+from mc_args import SortingMode
+from mc_progress import MCProgress
 
 class MCRepo():
 
-    __language = 'en'
-    __deckIds = []
-
+    __args: MCArgs = None
+    __progress: MCProgress = None
+    
     __cardPath = "api/public/card"
     __deckPath = "api/public/deck"
 
@@ -56,9 +59,9 @@ class MCRepo():
         }
     }
     
-    def __init__(self, language, deckIds):
-        self.__language = language
-        self.__deckIds = deckIds
+    def __init__(self, args, progress):
+        self.__args = args
+        self.__progress = progress
 
     #---------------------------------------------
 
@@ -76,15 +79,15 @@ class MCRepo():
     #---------------------------------------------
  
     def __getUrl(self, path, id):
-        match self.__language:
+        match self.__args.language:
             case 'en':
                 prefix = ''
             case _:
-                prefix = f"{self.__language}."
+                prefix = f"{self.__args.language}."
         return f"https://{prefix}marvelcdb.com/{path}/{id}"
 
     def __getFile(self, path, id):
-        return  f'./cache/{self.__language}/{path}/{id}.json'
+        return  f'./cache/{self.__args.language}/{path}/{id}.json'
 
     #---------------------------------------------
 
@@ -94,18 +97,22 @@ class MCRepo():
             return self.__jread(fileName)
         else:
             response = requests.get(self.__getUrl(path, id))
-            json_str = json.dumps(response.json(), sort_keys=True, indent=4)
-            json_str = json_str.replace('\\u0152','OE').replace('\\u0153','oe')
-            self.__jwrite(fileName, json_str)
-            return json.loads(json_str)
-
+            try:
+                json_str = json.dumps(response.json(), sort_keys=True, indent=4)
+                json_str = json_str.replace('\\u0152','OE').replace('\\u0153','oe')
+                json_str = json_str.replace("\\u2018","'" ).replace("\\u2019","'" )
+                self.__jwrite(fileName, json_str)
+                return json.loads(json_str)
+            except Exception:
+                raise
+ 
     #---------------------------------------------
 
     def __localise(self, text: str):
         if text.lower() in self.__translationMap:
             translations = self.__translationMap[text.lower()]
-            if self.__language in translations:
-                return translations[self.__language]
+            if self.__args.language in translations:
+                return translations[self.__args.language]
         return text
 
     #---------------------------------------------
@@ -156,48 +163,81 @@ class MCRepo():
         else:
             cardType = 'Other'
 
+        packName = cardResponse["pack_name"]
+
         card = {
             "name": cardResponse["name"],
             "quantity": cardQuantity,
             "icon":icon
         }
-        return card, cardType
+        return card, cardType, packName
 
     #---------------------------------------------
 
-    def __buildDeck(self, deckId):
+    def __createSection(self, name):
+       return {
+            "name":self.__localise(name),
+            "cout":0,
+            "cards":{}
+        } 
 
-        deckResponse = self.__fetch(self.__deckPath, deckId)
+    #---------------------------------------------
+
+    def __buildDeck(self, jdeck):
+
+        deckId = jdeck['id']
+
+        try:
+            deckResponse = self.__fetch(self.__deckPath, deckId)
+        except Exception:
+            raise
+
+        deckTitle = deckResponse["name"] if jdeck['title'] == None else jdeck['title']
 
         deck = {
             "name": "",
+            "hero": "",
             "version": "",
             "url":"",
-            "cards": {}
+            "sections":{}
         }
 
+        identitySectionName = self.__localise("Identity")
+
         # add another cell
-        deck["name"] = deckResponse["name"]
+        deck["name"] = deckTitle
+        deck["hero"] = deckResponse["investigator_name"]
         deck["version"] = deckResponse["version"]
         deck["url"] = self.__getUrl("deck/view",deckId)
 
         # Initialize cards sections to fix order. (hero, ally, ...) 
-        deck['cards'][self.__localise('hero')] = []
-        deck['cards'][self.__localise('ally')] = []
-        deck['cards'][self.__localise('upgrade')] = []
-        deck['cards'][self.__localise('event')] = []
-        deck['cards'][self.__localise('support')] = []
-        deck['cards'][self.__localise('resource')] = []
+        deck['sections'][identitySectionName] = {"count":0, "cards":[]}
 
-        for cardId, cardQuantity in deckResponse["slots"].items():
-            card, cardType = self.__buildCard( cardId, cardQuantity)
+        if self.__args.sortingMode == SortingMode.BY_TYPE:
+            deck['sections'][self.__localise('Ally')] = {"count":0, "cards":[]}
+            deck['sections'][self.__localise('Upgrade')] = {"count":0, "cards":[]}
+            deck['sections'][self.__localise('Event')] = {"count":0, "cards":[]}
+            deck['sections'][self.__localise('Support')] = {"count":0, "cards":[]}
+            deck['sections'][self.__localise('Resource')] = {"count":0, "cards":[]}
 
-            cardType = self.__localise(cardType)
+        cards = deckResponse["slots"].items()
+        for cardId, cardQuantity in self.__progress.apply(cards, desc="Loading Card", leave=False):
+            card, cardType, packName = self.__buildCard( cardId, cardQuantity)
 
-            if cardType not in deck['cards']:
-                deck['cards'][cardType] = []
+            if cardType == "Hero":
+                section = deck['sections'][identitySectionName]
+                section["count"]+=card["quantity"]
+                if self.__args.unfold: 
+                    section["cards"].append(card)
+            else:
+                sectionName = self.__localise(cardType) if self.__args.sortingMode == SortingMode.BY_TYPE else packName
 
-            deck['cards'][cardType].append(card)
+                if sectionName not in deck['sections']:
+                    deck['sections'][sectionName] = {"count":0, "cards":[]}
+
+                section = deck['sections'][sectionName]
+                section["cards"].append(card)
+                section["count"]+=card["quantity"] 
             
         return deck
 
@@ -205,6 +245,10 @@ class MCRepo():
 
     def buildDecks(self):
         decks = []
-        for deckId in self.__deckIds:
-            decks.append(self.__buildDeck(deckId))
+        for jdeck in self.__progress.apply(self.__args.jdecks, desc="Create Deck "):
+            try:
+                decks.append(self.__buildDeck(jdeck))
+            except Exception:
+                deckId = jdeck['id']
+                print(f'\nInvalid deck Id: {deckId}')
         return decks
