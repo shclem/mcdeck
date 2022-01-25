@@ -24,13 +24,13 @@ This script use decks from the [MarvelCDB](https://marvelcdb.com) site, and more
 
 In order to use this script it is recomended to create an account on marvelCDB web site and enable the `Share your decks` option from the `Edit account` page.
 
-![Edit profile](images/edit_account.png)
+![Edit profile](/images/edit_account.png)
 
-![Share your decks](images/share_your_decks.png)
+![Share your decks](/images/share_your_decks.png)
 
 Now you can select deck form your deck list and note the *id* at the end of the page name.
 
-![Deck Id](images/deck_id.png)
+![Deck Id](/images/deck_id.png)
 
 ## Usage
 
@@ -81,11 +81,11 @@ Use 1 or more ids to generate deck cards on "./output/output.pdf".
 
 > python mcdeck.py 260621 260622 26062
 
-![Sampe](images/sample_01.png)
+![Sampe](/images/sample_01.png)
 
 ### Exemple 2
 
-Use ids in ["./input/sample.txt"](input/sample.txt) to generate deck cards on "./output/sample.pdf" 
+Use ids in ["./input/sample.txt"](/input/sample.txt) to generate deck cards on "./output/sample.pdf" 
 
 **Note the identical name for both files (sample.txt and sample.pdf).**
 
@@ -93,17 +93,17 @@ Use ids in ["./input/sample.txt"](input/sample.txt) to generate deck cards on ".
 
 ### Exemple 3
 
-Use ids in ["./input/sample.json"](input/sample.json) to generate deck cards on "./output/sample.pdf" 
+Use ids in ["./input/sample.json"](/input/sample.json) to generate deck cards on "./output/sample.pdf" 
 
 **Enumerating the list of id in a json file allows to change the title of the decks.**
 
 > python mcdeck.py -i input/sample.json
 
-![Sampe](images/sample_02.png)
+![Sampe](/images/sample_02.png)
 
 ### Exemple 4
 
-Use ids from  ["./input/sample.json"](input/sample.json) with some command line arguments to generate deck cards on "./output/sample.pdf" 
+Use ids from  ["./input/sample.json"](/input/sample.json) with some command line arguments to generate deck cards on "./output/sample.pdf" 
 
 | argument  | meaning |
 |:-------------|:-------------|
@@ -114,13 +114,13 @@ Use ids from  ["./input/sample.json"](input/sample.json) with some command line 
 
 > python mcdeck.py -i input/sample.json -l fr -s by_set -u -ifs B
 
-![Sampe](images/sample_03.png)
+![Sampe](/images/sample_03.png)
 
 **⚠️ Note, on Adam Warlock's deck, that using the unfold option produces a display bug. This option should be used with caution**
 
 ### Exemple 5
 
-Use background option to use background image from ["resources/background"](resources/background/)
+Use background option to use background image from ["resources/background"](/resources/background/)
 
 | argument  | meaning |
 |:-------------|:-------------|
@@ -128,7 +128,7 @@ Use background option to use background image from ["resources/background"](reso
 
 > python mcdeck.py -i input/sample.json -b 
 
-![Sampe](images/sample_04.png)
+![Sampe](/images/sample_04.png)
 
 **Another background directory can be specified with argument -bd**
 
