@@ -9,6 +9,10 @@ class MCPdf(FPDF):
     __args: MCArgs = None
     __progress: MCProgress = None
 
+    __alternativeHeroNames = {
+        '27030a':'Spider-Man - Miles Morales'
+    }
+
     def __init__(self, args, progress):
         FPDF.__init__(self, orientation=args.pageOrientation, unit='mm', format=args.pageFormat)
         self.__args = args
@@ -84,7 +88,7 @@ class MCPdf(FPDF):
             totalCount += section["count"]
 
         deckName = deck["name"]
-        heroName = deck["hero"]
+        heroName = self.__alternativeHeroNames.get(deck["code"], deck["hero"])
 
         self.x = self.pageMarginWidth + self.cardIndexX * self.cardWidth
         self.y = self.pageMarginHeight + self.cardIndexY * self.cardHeight

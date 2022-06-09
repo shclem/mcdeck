@@ -196,7 +196,8 @@ class MCRepo():
 
         deck = {
             "name": "",
-            "hero": "",
+            "hero": "", 
+            "code": "",
             "version": "",
             "url":"",
             "sections":{}
@@ -207,6 +208,7 @@ class MCRepo():
         # add another cell
         deck["name"] = deckTitle
         deck["hero"] = deckResponse["investigator_name"]
+        deck["code"] = deckResponse["investigator_code"]
         deck["version"] = deckResponse["version"]
         deck["url"] = self.__getUrl("deck/view",deckId)
 
